@@ -2,6 +2,12 @@ package lesson1;
 
 import kotlin.NotImplementedError;
 
+import java.io.*;
+
+import java.util.*;
+
+import static java.lang.Math.abs;
+
 @SuppressWarnings("unused")
 public class JavaTasks {
     /**
@@ -34,9 +40,42 @@ public class JavaTasks {
      *
      * В случае обнаружения неверного формата файла бросить любое исключение.
      */
-    static public void sortTimes(String inputName, String outputName) {
-        throw new NotImplementedError();
+
+    // Ресурсоёмкость - O(n)
+    // Трудоёмкость - O(n*log(n))
+
+    static public void sortTimes(String inputName, String outputName) throws IOException {
+        List<String> pm = new ArrayList<>();
+        List<String> am = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputName)))) {
+            String times = reader.readLine();
+
+            while (times != null) {
+                if (!times.matches("^(0[1-9]|1[0-2]):([0-5]\\d):([0-5]\\d) [PA]M$"))
+                    throw new IllegalArgumentException();
+                if (times.startsWith("12")) times = times.replaceFirst("12", "00");
+                if (times.endsWith("PM")) pm.add(times);
+                else am.add(times);
+                times = reader.readLine();
+            }
+        }
+
+        Collections.sort(am);
+        Collections.sort(pm);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputName))) {
+            for (String times : am) {
+                if (times.startsWith("00")) times = times.replaceFirst("00", "12");
+                writer.write(times + System.getProperty("line.separator"));
+            }
+            for (String times : pm) {
+                if (times.startsWith("00")) times = times.replaceFirst("00", "12");
+                writer.write(times + System.getProperty("line.separator"));
+            }
+        }
     }
+
 
     /**
      * Сортировка адресов
@@ -98,9 +137,35 @@ public class JavaTasks {
      * 99.5
      * 121.3
      */
-    static public void sortTemperatures(String inputName, String outputName) {
-        throw new NotImplementedError();
+
+    // Ресурсоёмкость - O(n)
+    // Трудоёмкость - O(n*log(n))
+
+    static public void sortTemperatures(String inputName, String outputName) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputName))) {
+            List<Integer> list = new ArrayList<>();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                list.add((int) (Double.parseDouble(line) * 10));
+            }
+            int[] arr = new int[list.size()];
+
+            for (int i = 0; i < list.size(); i++) {
+                arr[i] = list.get(i);
+            }
+            Sorts.heapSort(arr);
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputName))) {
+                for (int i = 0; i < list.size(); i++) {
+                    String temp = String.valueOf(arr[i] / 10.0);
+                    writer.write(temp);
+                    writer.write("\n");
+                }
+            }
+        }
     }
+
 
     /**
      * Сортировка последовательности

@@ -19,9 +19,8 @@ class TaskTestsJava : AbstractTaskTests() {
 
     @Test
     @Tag("4")
-    fun testSortTemperaturesJava() {
+    fun testSortTemperaturesJava() =
         sortTemperatures { inputName, outputName -> JavaTasks.sortTemperatures(inputName, outputName) }
-    }
 
     @Test
     @Tag("4")
