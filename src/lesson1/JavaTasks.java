@@ -6,8 +6,6 @@ import java.io.*;
 
 import java.util.*;
 
-import static java.lang.Math.abs;
-
 @SuppressWarnings("unused")
 public class JavaTasks {
     /**
