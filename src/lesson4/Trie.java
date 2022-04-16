@@ -92,8 +92,61 @@ public class Trie extends AbstractSet<String> implements Set<String> {
     @NotNull
     @Override
     public Iterator<String> iterator() {
-        // TODO
-        throw new NotImplementedError();
+        return new TrieIterator();
+    }
+
+    public class TrieIterator implements Iterator<String> {
+        private final List<String> listWord = new ArrayList<>();
+        private int count;
+        private String current;
+
+        // Ресурсоёмкость: O(n)
+        // Трудоёмксость: O(n)
+
+        private TrieIterator() {
+            count = 0;
+            addToList(root, "");
+        }
+
+        private void addToList(Node node, String word) {
+            for (char child : node.children.keySet()) {
+                if (child == (char) 0)
+                    listWord.add(word);
+                else
+                    addToList(node.children.get(child), word + child);
+            }
+        }
+
+        // Ресурсоёмкость: O(1)
+        // Трудоёмксость: O(1)
+
+        @Override
+        public boolean hasNext() {
+            return count < listWord.size();
+        }
+
+        // Ресурсоёмкость: O(1)
+        // Трудоёмксость: O(1)
+
+        @Override
+        public String next() {
+            if (count >= listWord.size())
+                throw new NoSuchElementException();
+            current = listWord.get(count);
+            count++;
+            return current;
+        }
+
+        // Ресурсоёмкость: O(1)
+        // Трудоёмксость: O(1)
+
+        @Override
+        public void remove() {
+            if (current == null)
+                throw new IllegalStateException();
+            Trie.this.remove(current);
+            current = null;
+        }
     }
 
 }
