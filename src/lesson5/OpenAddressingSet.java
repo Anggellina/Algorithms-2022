@@ -1,13 +1,18 @@
 package lesson5;
 
-import kotlin.NotImplementedError;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 public class OpenAddressingSet<T> extends AbstractSet<T> {
+
+    private static class Removed {
+    }
+
+    private final Removed removed = new Removed();
 
     private final int bits;
 
@@ -67,7 +72,7 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
         int startingIndex = startingIndex(t);
         int index = startingIndex;
         Object current = storage[index];
-        while (current != null) {
+        while (current != null && current != removed) { //проверка условия удаленности элемента
             if (current.equals(t)) {
                 return false;
             }
@@ -93,9 +98,20 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
      *
      * Средняя
      */
+
+    // Ресурсоёмкость: O(1)
+
     @Override
     public boolean remove(Object o) {
-        return super.remove(o);
+        if (!contains(o))
+            return false;
+        int index = startingIndex(o);
+        while (!storage[index].equals(o)) {
+            index = (index + 1) % capacity;
+        }
+        storage[index] = removed;
+        size--;
+        return true;
     }
 
     /**
@@ -111,7 +127,55 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
     @NotNull
     @Override
     public Iterator<T> iterator() {
-        // TODO
-        throw new NotImplementedError();
+        return new OpenAddressingSetIterator();
+    }
+
+    public class OpenAddressingSetIterator implements Iterator<T> {
+        int index;
+        int iterated;
+        Object current;
+        final int elementCount;
+
+        // Ресурсоёмкость: O(1)
+
+        public OpenAddressingSetIterator() {
+            index = -1;
+            iterated = 0;
+            elementCount = size;
+        }
+
+        // Трудоёмксость: O(1)
+
+        @Override
+        public boolean hasNext() {
+            return iterated < elementCount;
+        }
+
+
+        @Override
+        public T next() {
+            if (iterated == elementCount)
+                throw new NoSuchElementException();
+            current = storage[++index];
+            while (current == removed || current == null) {
+                index++;
+                current = storage[index];
+            }
+            iterated++;
+            T current = (T) this.current;
+            return current;
+        }
+
+        // Ресурсоёмкость: O(1)
+        // Трудоёмксость: O(1)
+
+        @Override
+        public void remove() {
+            if (current == null)
+                throw new IllegalStateException();
+            storage[index] = removed;
+            size--;
+            current = null;
+        }
     }
 }
