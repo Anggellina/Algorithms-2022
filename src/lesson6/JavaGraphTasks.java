@@ -2,8 +2,7 @@ package lesson6;
 
 import kotlin.NotImplementedError;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class JavaGraphTasks {
@@ -33,8 +32,44 @@ public class JavaGraphTasks {
      * Справка: Эйлеров цикл -- это цикл, проходящий через все рёбра
      * связного графа ровно по одному разу
      */
+
+    // Ресурсоёмкость: O(n+m)
+    // Трудоёмксость: O(n*m)
+
     public static List<Graph.Edge> findEulerLoop(Graph graph) {
-        throw new NotImplementedError();
+        List<Graph.Edge> result = new ArrayList<>();
+        Set<Graph.Edge> visitedEdges = new HashSet<>();
+        Deque<Graph.Vertex> stack = new ArrayDeque<>();
+
+        for (Graph.Vertex v : graph.getVertices())
+            if (graph.getNeighbors(v).size() % 2 == 1)
+                return new ArrayList<>();
+
+        if (graph.getVertices().isEmpty())
+            return result;
+
+        stack.push(graph.getVertices().iterator().next());
+        while (!stack.isEmpty()) {
+            boolean found = false;
+            Graph.Vertex current = stack.peek();
+            for (Graph.Vertex v : graph.getNeighbors(current)) {
+                if (visitedEdges.contains(graph.getConnection(current, v)))
+                    continue;
+                found = true;
+                visitedEdges.add(graph.getConnection(current, v));
+                stack.push(v);
+                break;
+            }
+            if (!found) {
+                stack.pop();
+                if (stack.peek() != null)
+                    result.add(graph.getConnection(current, stack.peek()));
+            }
+        }
+
+        if (result.size() != graph.getEdges().size())
+            return new ArrayList<>();
+        return result;
     }
 
     /**
@@ -94,7 +129,28 @@ public class JavaGraphTasks {
      * Если на входе граф с циклами, бросить IllegalArgumentException
      */
     public static Set<Graph.Vertex> largestIndependentVertexSet(Graph graph) {
-        throw new NotImplementedError();
+        Set<Graph.Vertex> independent = new HashSet<>();
+        Set<Graph.Vertex> dependent = new HashSet<>();
+        if (hasCycle(graph)) throw new IllegalArgumentException();
+
+        for (Graph.Vertex v: graph.getVertices()){
+            if (!dependent.contains(v)) {
+                independent.add(v);
+                dependent.addAll(graph.getNeighbors(v));
+            }
+        }
+        if (dependent.size() > independent.size()) return dependent;
+        else return independent;
+    }
+
+    private static boolean hasCycle(Graph graph) {
+        Set<Graph.Vertex> visited = new HashSet<>();
+        for (Graph.Vertex v: graph.getVertices()){
+            if (graph.getNeighbors(v).size() < 2) continue;
+            if (visited.containsAll(graph.getNeighbors(v))) return true;
+            else visited.add(v);
+        }
+        return false;
     }
 
     /**
@@ -118,7 +174,23 @@ public class JavaGraphTasks {
      * Ответ: A, E, J, K, D, C, H, G, B, F, I
      */
     public static Path longestSimplePath(Graph graph) {
-        throw new NotImplementedError();
+        Path longest = new Path();
+        Deque<Path> paths = new ArrayDeque<>();
+
+        for (Graph.Vertex vertex : graph.getVertices()) {
+            while (!paths.isEmpty()) {
+                Path current = paths.pop();
+                Graph.Vertex last = current.getVertices().get(current.getVertices().size() - 1);
+                for (Graph.Vertex v : graph.getNeighbors(last))
+                    if (!current.getVertices().contains(v))
+                        paths.push(new Path(current, graph, v));
+                if (longest.getLength() < current.getLength()) {
+                    longest = current;
+                }
+            }
+            paths.push(new Path(vertex));
+        }
+        return longest;
     }
 
 
