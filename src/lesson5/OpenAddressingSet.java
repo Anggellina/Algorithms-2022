@@ -100,19 +100,20 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
      */
 
     // Ресурсоёмкость: O(1)
-    // Трудоемкость: O(1/(1-(n/вместимость)))
+    // Трудоемкость: O(n)
 
     @Override
     public boolean remove(Object o) {
-        if (!contains(o))
-            return false;
-        int index = startingIndex(o);
-        while (!storage[index].equals(o)) {
-            index = (index + 1) % capacity;
+        var index = startingIndex(o);
+        while (null != storage[index]) {
+            if (storage[index].equals(o)) {
+                storage[index] = removed;
+                size--;
+                return true;
+            }
+            index++;
         }
-        storage[index] = removed;
-        size--;
-        return true;
+        return false;
     }
 
     /**
