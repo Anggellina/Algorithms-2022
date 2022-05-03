@@ -33,8 +33,10 @@ public class JavaGraphTasks {
      * связного графа ровно по одному разу
      */
 
-    // Ресурсоёмкость: O(n+m)
-    // Трудоёмксость: O(n*m)
+    // E - кол-во ребер
+    // V - кол-во вершин
+    // Ресурсоёмкость: O(E+V)
+    // Трудоёмксость: O(E*V)
 
     public static List<Graph.Edge> findEulerLoop(Graph graph) {
         List<Graph.Edge> result = new ArrayList<>();
@@ -128,6 +130,12 @@ public class JavaGraphTasks {
      *
      * Если на входе граф с циклами, бросить IllegalArgumentException
      */
+
+    // E - кол-во ребер
+    // V - кол-во вершин
+    // Ресурсоёмкость: O(V+E)
+    // Трудоёмксость: O(E)
+
     public static Set<Graph.Vertex> largestIndependentVertexSet(Graph graph) {
         Set<Graph.Vertex> independent = new HashSet<>();
         Set<Graph.Vertex> dependent = new HashSet<>();
@@ -173,6 +181,12 @@ public class JavaGraphTasks {
      *
      * Ответ: A, E, J, K, D, C, H, G, B, F, I
      */
+
+    // E - кол-во ребер
+    // V - кол-во вершин
+    // Ресурсоёмкость: O(E)
+    // Трудоёмксость: O(V+E)
+
     public static Path longestSimplePath(Graph graph) {
         Path longest = new Path();
         Deque<Path> paths = new ArrayDeque<>();

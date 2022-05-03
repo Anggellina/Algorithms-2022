@@ -1,5 +1,6 @@
 package lesson5
 
+import lesson5.KtOpenAddressingSet
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 

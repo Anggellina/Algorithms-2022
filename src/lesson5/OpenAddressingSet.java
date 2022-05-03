@@ -100,6 +100,7 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
      */
 
     // Ресурсоёмкость: O(1)
+    // Трудоемкость: O(1/(1-(n/вместимость)))
 
     @Override
     public boolean remove(Object o) {
@@ -151,6 +152,7 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
             return iterated < elementCount;
         }
 
+        // Трудоемкость: O(1/(1-(n/вместимость)))
 
         @Override
         public T next() {
